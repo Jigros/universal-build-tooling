@@ -1,0 +1,17 @@
+name: Universal toolchain
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Build generic tooling
+        run: docker build -t universal-toolchain:check .
+      - name: Smoke test tools
+        run: docker run --rm universal-toolchain:check sh -c 'python --version && node --version && npm --version && pytest --version && ruff --version && mypy --version'
